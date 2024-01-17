@@ -1,22 +1,22 @@
-const { ApolloServer,gql } = require('apollo-server-express');
+
+const { ApolloServer } = require('apollo-server-express');
+const {
+  ApolloServerPluginLandingPageLocalDefault
+} = require('apollo-server-core');
 const express = require('express');
+const  typeDefs = require('./graphql/schema');
+const  resolvers = require('./graphql/resolvers');
 
 const app = express();
 
-const typeDefs= gql`
-type Query{
-  me:String
-}
-`
-const resolvers = {
-  Query:{}
-};
-
 const server = new ApolloServer({ 
   typeDefs, 
-  resolvers
+  resolvers,
+  plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
+  context:({req})=>{
+    return req
+  }
  });
- 
 async function startApolloServer() {
     await server.start();
     server.applyMiddleware({ app });
